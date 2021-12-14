@@ -11,13 +11,12 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.TcpClient;
 
 /**
@@ -27,6 +26,9 @@ import reactor.netty.tcp.TcpClient;
 @Service
 @RequiredArgsConstructor
 public class CreditOperationsImpl implements CreditOperations {
+    
+    @Value(value = "${service.credit.url}")
+    private String SERVICE_CREDIT_URL;
 
     Logger logger = LoggerFactory.getLogger(AccountOperationsImpl.class);
 
@@ -40,10 +42,10 @@ public class CreditOperationsImpl implements CreditOperations {
                         .addHandlerLast(new WriteTimeoutHandler(3)));
 
         WebClient webClient = WebClient.builder()
-                .baseUrl("http://banck-credit.southcentralus.azurecontainer.io:8082")
+                .baseUrl(SERVICE_CREDIT_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient))) // timeout
+                //.clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient))) // timeout
                 .build();
 
         return webClient.get()
