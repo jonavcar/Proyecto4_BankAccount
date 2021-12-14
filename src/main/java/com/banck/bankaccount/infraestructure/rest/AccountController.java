@@ -28,7 +28,6 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import com.banck.bankaccount.aplication.AccountTopicOperation;
 
 /**
  *
@@ -44,7 +43,6 @@ public class AccountController {
     LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("America/Bogota"));
     private final AccountOperations operations;
     private final CreditOperations creditOperations;
-    private final AccountTopicOperation accountKafkaOperation;
 
     @GetMapping
     public Flux<Account> listAll() {
@@ -71,7 +69,6 @@ public class AccountController {
         reqAccount.setAccount(reqAccount.getCustomer() + "-" + getRandomNumberString());
         reqAccount.setDateCreated(dateTime.format(formatter));
         reqAccount.setStatus(true);
-        accountKafkaOperation.sendCreatedAccount(reqAccount);
         return Mono.just(reqAccount).flatMap(account -> {
             String msgTipoCuenta
                     = "Cuenta Ahorro = { \"accountType\": \"CA\" }\n"

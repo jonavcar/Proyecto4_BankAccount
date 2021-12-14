@@ -2,9 +2,22 @@ server:
   port: 8081
 
 spring:
+  profiles:
+    active: dev
   application:
     name: banckaccount-microservice
+
+---
+spring:
+  profiles: dev
   cloud:
     config:
-      enable: true
+      enabled: true
+      uri: http://localhost:9998
+---
+spring:
+  profiles: qas
+  cloud:
+    config:
+      enabled: true
       uri: http://config-server.southcentralus.azurecontainer.io:9998
